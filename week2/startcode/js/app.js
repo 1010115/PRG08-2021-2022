@@ -3,12 +3,29 @@ let img = document.getElementById('image') ;
 const synth = window.speechSynthesis;
 const btn = document.getElementById('button');
 
-btn.addEventListener("click", say("hi"))
+const image = document.getElementById('output')
+const fileButton = document.querySelector("#file")
+
+fileButton.addEventListener("change", (event)=>loadFile(event))
+
+function loadFile(event) {
+	image.src = URL.createObjectURL(event.target.files[0])
+}
+
+
+btn.addEventListener("click", () => say("hi"))
 
 function loadModel() {
     classifier = ml5.imageClassifier('MobileNet', modelLoaded);
 
 }
+
+image.addEventListener('load', () => userImageUploaded())
+
+function userImageUploaded(){
+    console.log("The image is now visible in the DOM")
+}
+
 
 function modelLoaded() {
     console.log('Model Loaded!')
@@ -23,6 +40,7 @@ function classifyImage() {
 }
 
 function say(message) {
+    console.log("say function triggered");
     if (synth.speaking){
         console.log('speaking')
         return
@@ -32,6 +50,8 @@ function say(message) {
         synth.speak(utterThis);
     }
 }
+
+
 
 loadModel()
 classifyImage()
