@@ -1,5 +1,6 @@
 let classifier;
 let img = document.getElementById('image') ;
+let result ;
 const synth = window.speechSynthesis;
 const btn = document.getElementById('button');
 
@@ -13,7 +14,7 @@ function loadFile(event) {
 }
 
 
-btn.addEventListener("click", () => say("hi"))
+btn.addEventListener("click", () => classifyImage())
 
 function loadModel() {
     classifier = ml5.imageClassifier('MobileNet', modelLoaded);
@@ -33,9 +34,9 @@ function modelLoaded() {
 
 
 function classifyImage() {
-    classifier.classify(img, (err, results) => { console.log(results); });
-
-     say(`I think this photo shows a tennis ball!`)
+    classifier.classify(img, (err, results) => { (result = results[0].label); });
+    
+     say(`I think this photo shows a ${result}!`)
 
 }
 
