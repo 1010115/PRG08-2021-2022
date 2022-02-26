@@ -1,5 +1,5 @@
 let classifier;
-
+let score = 0
 let result;
 let gamePhotos = ["siamese-cat.jpg", "mug.jpg", "hamster.jpg", "pomeranian.jpg"]
 let gameArray = ["Siamese cat, Siamese", "coffee mug", "hamster", "Pomeranian"]
@@ -9,7 +9,17 @@ let exampleImg = document.createElement("img");
 exampleImg.src = ` ./images/${gamePhotos[randomNumber]}`;
 exampleImg.id = "image";
 exampleImgDiv.appendChild(exampleImg);
+let objectiveDiv = document.getElementById("objectiveDiv");
+let objective = document.createElement("h2");
+objective.innerText = `Take a picture of a ${gameArray[randomNumber]}`;
+objectiveDiv.appendChild(objective);
+
+let scoreDiv = document.getElementById("scoreDiv");
+let scoreView = document.createElement("h2");
+scoreView.innerText = `Your score is ${score}`;
+scoreDiv.appendChild(scoreView);
 let classifiedImg = document.getElementById('image');
+
 const synth = window.speechSynthesis;
 const classifyBtn = document.getElementById('classify');
 const userImage = document.getElementById('output')
@@ -21,7 +31,6 @@ let desiredResult = {
 }
 let checkBtn = document.getElementById('check');
 let compareBool = false;
-let score = 0
 
 
 fileButton.addEventListener("change", (event) => loadFile(event))
@@ -92,6 +101,9 @@ function compare(result) {
         desiredResult.label = gameArray[randomNumber];
         exampleImg.src = ` ./images/${gamePhotos[randomNumber]}`;
         exampleImgDiv.appendChild(exampleImg);
+        scoreView.innerText = `Your score is ${score}`;
+        scoreDiv.appendChild(scoreView);        
+
         console.log(desiredResult.label)
 
 
