@@ -7,9 +7,10 @@ const userImage = document.getElementById('output')
 const fileButton = document.querySelector("#file")
 let desiredResult = {
     label: "coffee mug",
-    confidenc: 0.5
+    confidence: 0.5
 }
 let checkBtn = document.getElementById('check');
+let compareBool = false;
 
 fileButton.addEventListener("change", (event) => loadFile(event))
 
@@ -17,7 +18,7 @@ classifyBtn.addEventListener("click", () => classifyImage(classifiedImg))
 
 userImage.addEventListener('load', () => userImageUploaded())
 
-checkBtn.addEventListener('click', () => {classifyImage(userImage);compare(result)})
+checkBtn.addEventListener('click', () => { classifyImage(userImage); compareBool = true; })
 
 function loadFile(event) {
     userImage.src = URL.createObjectURL(event.target.files[0])
@@ -39,9 +40,21 @@ function modelLoaded() {
 
 
 function classifyImage(img) {
-    classifier.classify(img, (err, results) => { (result = results[0]); });
+    result = 0;
+    classifier.classify(img, (err, results) => {
+        (result = results[0]);
 
-    if (result !== undefined) {
+        feedback();
+
+        if (compareBool == true){
+            compare(result);
+            compareBool = false;
+        }
+    });
+}
+
+function feedback() {
+    if (result !== undefined && result !== 0) {
         console.log(`I think this photo shows a ${result.label}, I am ${Math.round(result.confidence * 100)} % sure !`);
         say(`I think this photo shows a ${result.label}!, I am ${Math.round(result.confidence * 100)} % sure !`)
     }
@@ -59,14 +72,15 @@ function say(message) {
 }
 
 function compare(result) {
-    if ( result.label !== undefined && result.label == desiredResult.label) {
+    if (result.label !== undefined && result.label == desiredResult.label && result !== 0) {
         say(`Congratulations this is a ${result.label}`);
         console.log(`Congratulations this is a ${result.label}`)
-    } else {
+    } else if (result.label !== undefined && result !== 0){  
         say(`this doesn't look like a ${desiredResult.label}, this looks more like a ${result.label}`);
         console.log(`this doesn't look like a ${desiredResult.label}, this looks more like a ${result.label}`)
     }
 }
 
 loadModel()
+
 
