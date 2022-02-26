@@ -9,12 +9,14 @@
     <title>Pre-trained model in ML5</title>
 </head>
 <body>
+    <div id ="exampleImgDiv">
     <h2>Loading a pre-trained model</h2>
-    <img id="image" src="./images/mug.jpg">
     <button id="classify" type="button">Classify</button>
+    </div>
 
-
+    <div id="objective">
     <h2>Take a picture of a coffee mug</h2>
+    </div>
     <div>
         <label for="file">Upload Image</label>
         <input type="file" accept="image/*;capture=camera" id="file">
@@ -22,5 +24,9 @@
       
       <div><img id="output" width="400"/></div>
       <button id="check" type="button">Check</button>
+
+      <div id="scoreDiv">
+
+      </div>
 </body>
 </html> 

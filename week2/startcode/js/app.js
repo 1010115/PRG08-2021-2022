@@ -1,16 +1,28 @@
 let classifier;
-let classifiedImg = document.getElementById('image');
+
 let result;
+let gamePhotos = ["siamese-cat.jpg", "mug.jpg", "hamster.jpg", "pomeranian.jpg"]
+let gameArray = ["Siamese cat, Siamese", "coffee mug", "hamster", "Pomeranian"]
+let randomNumber = Math.floor(Math.random() * gameArray.length)
+let exampleImgDiv = document.getElementById("exampleImgDiv");
+let exampleImg = document.createElement("img");
+exampleImg.src = ` ./images/${gamePhotos[randomNumber]}`;
+exampleImg.id = "image";
+exampleImgDiv.appendChild(exampleImg);
+let classifiedImg = document.getElementById('image');
 const synth = window.speechSynthesis;
 const classifyBtn = document.getElementById('classify');
 const userImage = document.getElementById('output')
 const fileButton = document.querySelector("#file")
+
 let desiredResult = {
-    label: "coffee mug",
+    label: gameArray[randomNumber],
     confidence: 0.5
 }
 let checkBtn = document.getElementById('check');
 let compareBool = false;
+let score = 0
+
 
 fileButton.addEventListener("change", (event) => loadFile(event))
 
@@ -46,7 +58,7 @@ function classifyImage(img) {
 
         feedback();
 
-        if (compareBool == true){
+        if (compareBool == true) {
             compare(result);
             compareBool = false;
         }
@@ -73,14 +85,25 @@ function say(message) {
 
 function compare(result) {
     if (result.label !== undefined && result.label == desiredResult.label && result !== 0) {
-        say(`Congratulations this is a ${result.label}`);
-        console.log(`Congratulations this is a ${result.label}`)
-    } else if (result.label !== undefined && result !== 0){  
+        score += 1;
+        console.log(score)
+
+        randomNumber = Math.floor(Math.random() * gameArray.length)
+        desiredResult.label = gameArray[randomNumber];
+        exampleImg.src = ` ./images/${gamePhotos[randomNumber]}`;
+        exampleImgDiv.appendChild(exampleImg);
+        console.log(desiredResult.label)
+
+
+        say(`Congratulations this is a ${result.label}, your score is ${score}`);
+        console.log(`Congratulations this is a ${result.label}, your score is ${score}`)
+    } else if (result.label !== undefined && result !== 0) {
         say(`this doesn't look like a ${desiredResult.label}, this looks more like a ${result.label}`);
         console.log(`this doesn't look like a ${desiredResult.label}, this looks more like a ${result.label}`)
     }
 }
 
-loadModel()
 
+loadModel()
+console.log(desiredResult.label);
 
