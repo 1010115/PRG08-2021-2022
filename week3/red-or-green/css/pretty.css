@@ -1,0 +1,23 @@
+body{
+    background-color:#e3f0fe;
+    font-family: sans-serif;
+    font-weight: bolder;
+    color: #1a4de7;
+}
+
+h1 {
+margin-left: 23em
+}
+
+#label{
+    margin-left: 55em;
+}
+
+video {
+    transform: scale(-1,1);
+    border: solid;
+    border-color: black;
+    border-radius: 1em;
+    margin-left: 46em;
+
+}
