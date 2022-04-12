@@ -1,45 +1,34 @@
 
 # Praktijkopdracht week 6
 
-Maak eerst de [basisoefening](./README.md) af, voordat je hiermee begint! Als iets niet lukt, ga dan door met de volgende stap. 
+Maak eerst de [basisoefening](./README.md) af, voordat je hiermee begint!
 
-### Lezen:
+## Stappen
 
- - [Lees de ML5 documentatie over neural networks](https://learn.ml5js.org/#/reference/neural-network)
- - Bekijk de links onderin dit document en bekijk een van de artikelen of filmpjes
+  - CSV data inladen
+  - Verbanden in data tonen in scatterplot
+  - Neural Network trainen
+  - Model opslaan en inladen in een aparte HTML pagina.
+  - Kijken naar classification met Neural Network
 
-### Uitwerken:
-
-  - Dataset gebruiken
-  - Scatterplot tekenen van punten en voorspelling
-  - Model opslaan en inladen in een aparte UI
-  - Optioneel : kan je de accuracy uitrekenen met testdata?
-
-Denk na over:
-
-  - Welke data heb je gebruikt? 
-  - Ging dat in een keer goed? Waar liep je tegen aan?
-  - Is je prediction een mooie lijn in je data scatterplot?
-  - Kon je een accuracy uitrekenen met testdata?
-  - Wat heb je gelezen van de geleverde externe links / filmpjes? Zat hier iets bij dat jij interessant vindt?
 
 <br>
 <br>
 <br>
 
-# Opdracht
+## CSV data
 
-<br>
+Gebruik een dataset die geschikt is voor *regression* (voorspellen van een getal). Gebruik [Papa Parse](https://www.papaparse.com) om CSV files te laden. In deze repository staan drie oefenbestanden, je kan meer voorbeelden vinden onder "links" en door [op kaggle te zoeken naar regression datasets](https://www.kaggle.com/search?q=tag%3A%22regression%22+in%3Adatasets)
 
-## Data
-
-Gebruik een dataset die geschikt is voor regression. Onderaan deze pagina vind je een aantal links, en je mag ook zelf zoeken naar [regression datasets op Kaggle](https://www.kaggle.com/search?q=tag%3A%22regression%22+in%3Adatasets). Gebruik [Papa Parse](https://www.papaparse.com) om CSV files te laden. 
+- ***cars.csv*** - voorspel brandstofverbruik met de eigenschappen van bestaande auto's.
+- ***houseprices.csv*** - voorspel huizenprijzen met de eigenschappen van bestaande huizen.
+- ***winequality.csv*** - voorspel wijnkwaliteit naar aanleiding van eigenschappen van de wijn.
 
 ```javascript
 function loadData() {
     Papa.parse("./data/cars.csv", {
         download: true,
-        header: true, // true maakt objecten, false maakt arrays
+        header: true, 
         dynamicTyping: true,
         complete: results => console.log(results.data)
     })
@@ -47,52 +36,70 @@ function loadData() {
 ```
 
 <br>
-
-### Data opschonen
-
-Een CSV file is niet altijd netjes ingedeeld. Controleer of er verkeerde waarden in staan. Dit kan je doen in Excel, of je kan in javascript de verkeerde waarden filteren. Je moet data shufflen voordat je een neural network gaat trainen. [Zie deze code snippet voor het prepareren van je data](https://github.com/HR-CMGT/PRG08-2020-2021/blob/main/snippets/csv.md).
-
-<br>
-
-### Scatterplot tekenen
-
-Teken nu de scatterplot van twee kolommen in je data. Op de Y as zet je het getrainde label (bv. de "mpg" van de auto). Op de X as zet je de feature waar je op wil trainen (bv. de "horsepower" van de auto).
-
-Het scatterplot kan verkeerde waarden aan het licht brengen, bv. een auto met een "mpg" van 0. 
-
-> ⚠️ Een scatterplot toont alleen een X en een Y as, maar je kan eventueel wel trainen op meer features, bv. het gewicht en bouwjaar van de auto. Let op dat je alleen een X en Y aan de scatterplot visualiser doorgeeft.
-
-<br>
 <br>
 <br>
 
-## Training en Prediction
+## Scatterplot tekenen 
 
-Bij het trainen kan je meegeven hoeveel *epochs* dit moet duren. Experimenteer hiermee en kijk of dit veel verschil maakt voor je eindresultaat.
+Op de X as zet je de feature waar je op wil trainen. Op de Y as zet je de waarde die je wil kunnen voorspellen. Bijvoorbeeld voor een auto:
 
 ```javascript
-nn.train({ epochs: 12 }, finishedTraining)
-```
+import { createChart } from "./scatterplot.js"
 
-Na het trainen teken je in je scatterplot de predictions voor alle waarden. Bv, als een auto een horsepower van 10 tot 200 heeft, teken je 190 voorspellingen van de *miles per gallon* voor elke *horsepower*
+const chartdata = data.map(car => ({
+    x: car.horsepower,
+    y: car.mpg,
+}))
+
+createChart(chartdata)
+```
+### Opdracht
+
+Kijk of er nog meer kolommen in de CSV file relevant zijn voor hetgene dat je wil leren, door daar ook een scatterplot voor te tekenen. (bv. gewicht versus mpg van de auto).
+
+<br>
+<br>
+<br>
+
+## Training
+
+Zie de code uit het [vorige voorbeeld](./README.md) voor het trainen van een Neural Network.
+
+Een scatterplot toont een X en een Y as, maar je kan het Neural Network wel trainen op meer features! Bijvoorbeeld, de `cars.csv` bevat ***mpg, cylinders, displacement, horsepower, weight, acceleration,model year, origin, car name***
+
+In het eerste object van `addData()` geef je alle features mee waarvan je wil leren. Het tweede object bevat de data die je wil kunnen voorspellen.
+
+```javascript
+nn.addData({ feature1: data.feature1, feature2:data.feature2, ... }, { label: data.label })
+```
+> ⚠️ Bij een prediction moet je wel dezelfde features doorgeven om een voorspelling te krijgen!
+
+### Opdracht
+
+- Kan je het trainen verbeteren door meerdere kolommen toe te voegen?
+- Teken je voorspellingen in de scatterplot, door voor elke waarde op de x-as een voorspelling te doen.
 
 <br>
 <Br>
 <br>
 
-## Model opslaan en inladen
+## Model opslaan
 
-Voeg een knop toe aan je "training" webpagina waarmee je je getrainde model kan opslaan. [Documentatie: ML5 save()](https://learn.ml5js.org/#/reference/neural-network?id=save).
+Het is niet handig dat je steeds moet trainen voordat je een voorspelling kan doen. Daarom gaan we het getrainde model opslaan. Voeg een knop toe aan je "training" webpagina waarmee je je getrainde model kan opslaan. Lees daarvoor de [documentatie: ML5 save()](https://learn.ml5js.org/#/reference/neural-network?id=save).
 
-> ⚠️ Er lijkt een bug in MacOS Safari te zijn waarbij het model niet helemaal wordt opgeslagen. Er moeten drie bestanden verschijnen:
+⚠️ Als je na het trainen op de knop klikt worden er drie bestanden gedownload:
 ```bash
 model_meta.json
 model.json
 model.weights.bin
 ```
-Maak een aparte webpagina waarin je het getrainde model kan inladen. *Op deze pagina hoef je het neural network dus niet te trainen*. [Documentatie: ML5 load()](https://learn.ml5js.org/#/reference/neural-network?id=load)
+<br>
+<br>
+<br>
 
-Deze aparte pagina bevat een gebruiksvriendelijke UI waarin je bv. de *horsepower* van je auto kan invoeren, en dan de *miles per gallon* te zien krijgt.
+## Model inladen
+
+Maak nu een nieuwe webpagina waarin je dit getrainde model gaat inladen. Lees hiervoor de [documentatie: ML5 load()](https://learn.ml5js.org/#/reference/neural-network?id=load). Maak een *gebruiksvriendelijke UI* waarin je bv. de *horsepower* van je auto kan invoeren, en dan de *miles per gallon* te zien krijgt.
 
 ![car](../images/carpredict.png)
 
@@ -103,9 +110,32 @@ Deze aparte pagina bevat een gebruiksvriendelijke UI waarin je bv. de *horsepowe
 <br>
 <br>
 
-## Optioneel : Traindata en testdata
+## Classification 
 
-Net zoals bij de decision tree kan je de CSV data [opsplitsen](https://github.com/HR-CMGT/PRG08-2020-2021/blob/main/snippets/csv.md) zodat je na het trainen kan uitrekenen wat de accuracy van je voorspellingen is.
+Bij de K-Nearest-Neighbour en Decision Tree hebben we gewerkt met data voor classification. Dit kan je ook doen met een Neural Network. Gebruik deze ML5 voorbeeldcode om een van de eerdere datasets te trainen met een Neural Network. Let op dat de code nét iets anders is dan bij regression!
+  
+```javascript
+// voorbeeld titanic data
+  
+const nn = ml5.neuralNetwork({
+   task: 'classification',
+   debug: true
+})
+
+const inputs = { Pclass: 7, Sex: 1, Age: 22, SibSp:0 }
+const output = { Survived: "Died" }
+
+// gebruik een for-loop om alle rijen uit de CSV toe te voegen
+nn.addData(inputs, output)
+  
+// trainen
+nn.normalizeData()
+nn.train({ epochs: 32 }, () => console.log("Finished training!"))
+
+// classify
+const passenger = { Pclass: 7, Sex: 1, Age: 22, SibSp:0 }
+nn.classify(passenger, (error, result) => console.log(result))
+```
 
 <br>
 <br>
@@ -113,6 +143,7 @@ Net zoals bij de decision tree kan je de CSV data [opsplitsen](https://github.co
 
 
 
+# Links
 
 ## Datasets voor regression
 
@@ -120,18 +151,25 @@ Net zoals bij de decision tree kan je de CSV data [opsplitsen](https://github.co
 - [Boston House Prices](https://www.kaggle.com/vikrishnan/boston-house-prices)
 - [Cars miles per gallon](https://www.kaggle.com/uciml/autompg-dataset)
 - [Kaggle regression dataset search](https://www.kaggle.com/search?q=tag%3A%22regression%22+in%3Adatasets)
+  
+## Datasets voor classification
+  
+- [Diabetes](https://github.com/HR-CMGT/PRG08-2021-2022/blob/main/week5/oefening/data/diabetes.csv)
+- [Poisonous Mushrooms](https://github.com/HR-CMGT/PRG08-2021-2022/blob/main/week5/oefening/data/mushrooms.csv)
+- [Titanic Survivors](https://github.com/HR-CMGT/PRG08-2021-2022/blob/main/week5/oefening/data/titanic.csv)
+- [Speed Dating - who gets the most dates?](https://www.kaggle.com/datasets/annavictoria/speed-dating-experiment)
 
-## Documentation
+## Documentatie
 
-- [🔥 ML5 Neural Networks in Javascript](https://learn.ml5js.org/#/reference/neural-network)
-- [Vega Scatterplot documentation](https://vega.github.io/vega/examples/scatter-plot/)
-
+- [Opschonen van CSV data met filter en map](https://github.com/HR-CMGT/PRG08-2020-2021/blob/main/snippets/csv.md).
+- [🔥 ML5 Neural Networks](https://learn.ml5js.org/#/reference/neural-network)
+- [Hidden Layers toevoegen](https://github.com/HR-CMGT/PRG08-2021-2022/blob/main/snippets/layers.md)
+- [ChartJS Scatterplot code voorbeeld](https://github.com/HR-CMGT/PRG08-2021-2022/blob/main/snippets/scatterplot.md)
+- [ChartJS Scatterplot documentatie](https://www.chartjs.org/docs/latest/charts/scatter.html)
 
 ## Externe links
 
 - [📺 Crash Course Neural Networks](https://www.youtube.com/watch?v=JBlm4wnjNMY)
 - [📺  But what is a neural network?](https://www.youtube.com/watch?v=aircAruvnKk)
-- [📺  Showcase: Made with TensorFlowJS](https://www.youtube.com/watch?v=GskMuu821NI)
-- [📺 Code a perceptron from scratch in javascript!](https://www.youtube.com/watch?v=o98qlvrcqiU&t=26s)
 - [Neural Network Playground](https://playground.tensorflow.org/)
 - [Towards Data Science : Neural Networks for beginners](https://towardsdatascience.com/a-beginners-guide-to-neural-networks-d5cf7e369a13)

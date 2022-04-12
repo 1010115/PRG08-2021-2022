@@ -1,5 +1,4 @@
-import { VegaScatterplot } from "./libraries/vegascatterplot.js"
-import { createFakedata } from "./libraries/fakedata.js"
+import { createChart, updateChart } from "./scatterplot.js"
 
 let options = {task: 'regression', debug: true}
 let nn = ml5.neuralNetwork(options)
@@ -15,7 +14,7 @@ nn.train({ epochs: 10}, () => trainingFinished())
 let plot
 
 //
-// teken de scatterplot voor de fake data
+// cars data
 //
 async function drawScatterPlot() {
     plot = new VegaScatterplot()
@@ -23,16 +22,20 @@ async function drawScatterPlot() {
 }
 
 //
+// teken een scatterplot
+//
+function drawScatterplot(data) {
+
+}
+
+
+//
 // maak en train het neural network
 //
 async function createNeuralNetwork() {
     // maak neural network
 
-
     // voeg data toe aan neural network met addData
-    for (let row of fakeData) {
-        // nn.addData({ horsepower: row.horsepower }, { mpg: row.mpg })
-    }
 
     // train neural network
 
